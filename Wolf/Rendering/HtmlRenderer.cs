@@ -10,7 +10,7 @@ namespace Wolf
 
         private static string PropertyToHtml(string name, object value)
         {
-            if (typeof(IEnumerable).IsAssignableFrom(value.GetType()))
+            if (!(value is string) && typeof(IEnumerable).IsAssignableFrom(value.GetType()))
             {
                 var enumerable = (IEnumerable)value;
                 var listItems = new List<string>();
@@ -32,9 +32,10 @@ namespace Wolf
             var props = location.Properties.Select(it => PropertyToHtml(it.Key, it.Value));
             var s = string.Join("", props);
 
-            var linksList = CreateLinksList(location.Links); 
+            var linksList = CreateLinksList(location.Links);
+            var actionForm = CreateActionForm(location.Actions);
             
-            return $"<html><title>{location.Title}</title><body><h1>{location.Title}</h1><p>{location.Description}</p><div>{s}</div>{linksList}</body></html>";
+            return $"<html><title>{location.Title}</title><body><h1>{location.Title}</h1><p>{location.Description}</p><div>{s}</div>{linksList}{actionForm}</body></html>";
         }
 
         private static Link RenameSelfLink(Link link)
@@ -48,7 +49,7 @@ namespace Wolf
             {
                 var linkItems = links
                     .Select(it => it.Relation == "self" ? RenameSelfLink(it) : it)
-                    .Select(it => $"<li>{LinkToHtml(it)}</li>");
+                    .Select(it => $"<li>{LinkToAnchorTag(it)}</li>");
                 var s = string.Join("", linkItems);
                 return  $"Navigation: <ul>{s}</ul>";
             }
@@ -58,9 +59,54 @@ namespace Wolf
             }
         }
 
-        private static string LinkToHtml(Link link)
+        private static string LinkToAnchorTag(Link link)
         {
             return $"<a href=\"{link.Value}\">{link.Relation}</a>";
+        }
+
+        private static string CreateActionForm(List<Action> actions)
+        {
+            if (actions != null && actions.Any())
+            {
+                var forms = actions.Select(ActionToForm);
+                var s = string.Join("\n", forms);
+                return $"Actions: {s}";
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        private static string FieldToInput(Field field)
+        {
+            var properties = new List<string>();
+            properties.Add($"id=\"{field.Name}\"");
+            properties.Add($"name=\"{field.Name}\"");
+
+            if (field.Type != null)
+            {
+                properties.Add($"type=\"{field.Type}\"");
+            }
+
+            if (field.Value != null)
+            {
+                properties.Add($"value=\"{field.Value}\"");
+            }
+
+            var s = string.Join(" ", properties);
+
+            var label = field.Title ?? field.Name;
+
+            return $"<input {s} /><label for=\"{field.Name}\">{label}</label>";
+        }
+
+        private static string ActionToForm(Action action)
+        {
+            var inputs = action.Fields.Select(f => FieldToInput(f));
+            var inputsStr = string.Join("<br/>", inputs);
+            var submitStr = $"<input type=\"submit\" value=\"{action.Title}\">";
+            return $"<form method=\"{action.Method}\" action=\"{action.Href}\">{inputsStr}<br/>{submitStr}</form>";
         }
     }
 }

@@ -2,20 +2,26 @@
 
 namespace Wolf
 {
-    public class Entrance : Room
+    public class Entrance : Place
     {
-        public override Representation VisitWhenLit(Player player)
+        public override string Id => "/entrance";
+
+        public override string Title => "Entrance";
+
+        public override Representation Visit(Player player)
         {
+            player.Location = this;
+
             return new Representation
             {
-                Title = new Title("Entrance"),
+                Title = new Title(Title),
                 Description = new Description("You are at the entrance to a forbidding-looking stone castle. You are facing east."),
                 Properties = new Dictionary<string, object>(),
                 Links = new List<Link>
                     {
-                        new Link("self", "/entrance"),
+                        new Link("self", Id),
                         new Link("player", "/player"),
-                        new Link("provisions", "/provisions"),
+                        new Link("shop", "/shop"),
                         new Link("east", "/hallway")
                     }
             };

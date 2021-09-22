@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -6,34 +7,39 @@ namespace Wolf
 {
     public class GameRequestHandler
     {
-        private int _visits = 0;
         private readonly Game _game;
-        private readonly Dictionary<string, Place> _places;
+        private readonly Dictionary<string, Resource> _resources;
 
         public GameRequestHandler(Game game)
         {
             _game = game;
-            _places = new Dictionary<string, Place>
+
+            var random = new Random();
+
+            _resources = new Dictionary<string, Resource>
             {
-                { "/hallway", new Hallway() },
-                { "/audience-chamber", new AudienceChamber() },
-                { "/great-hall", new GreatHall() },
-                { "/meeting-room", new MeetingRoom() },
-                { "/inner-hallway", new InnerHallway() },
-                { "/entrance", new Entrance() },
-                { "/kitchen", new Kitchen() },
-                { "/store-room", new StoreRoom() },
-                { "/lift", new Lift() },
-                { "/rear-vestibule", new RearVestibule() },
-                { "/castle-exit", new CastleExit() },
-                { "/dungeon", new Dungeon() },
-                { "/guard-room", new GuardRoom() },
-                { "/master-bedroom", new MasterBedroom() },
-                { "/upper-hallway", new UpperHallway() },
-                { "/treasury", new Treasury() },
-                { "/chambermaids-room", new ChambermaidsRoom() },
-                { "/dressing-chamber", new DressingChamber() },
-                { "/small-room", new SmallRoom() }
+                { "/player", new PlayerResource(_game) },
+                { "/location", new LocationResource(_game) },
+                { "/shop", new ShopResource(_game, new Shop()) },
+                { "/hallway", new PlaceResource(_game, new Hallway()) },
+                { "/audience-chamber", new PlaceResource(_game, new AudienceChamber()) },
+                { "/great-hall", new PlaceResource(_game, new GreatHall()) },
+                { "/meeting-room", new PlaceResource(_game, new MeetingRoom()) },
+                { "/inner-hallway", new PlaceResource(_game, new InnerHallway()) },
+                { "/entrance", new PlaceResource(_game, new Entrance()) },
+                { "/kitchen", new PlaceResource(_game, new Kitchen()) },
+                { "/store-room", new PlaceResource(_game, new StoreRoom()) },
+                { "/lift", new PlaceResource(_game, new Lift()) },
+                { "/rear-vestibule", new PlaceResource(_game, new RearVestibule()) },
+                { "/castle-exit", new PlaceResource(_game, new CastleExit()) },
+                { "/dungeon", new PlaceResource(_game, new Dungeon()) },
+                { "/guard-room", new PlaceResource(_game, new GuardRoom()) },
+                { "/master-bedroom", new PlaceResource(_game, new MasterBedroom()) },
+                { "/upper-hallway", new PlaceResource(_game, new UpperHallway()) },
+                { "/treasury", new PlaceResource(_game, new Treasury(random)) },
+                { "/chambermaids-room", new PlaceResource(_game, new ChambermaidsRoom()) },
+                { "/dressing-chamber", new PlaceResource(_game, new DressingChamber()) },
+                { "/small-room", new PlaceResource(_game, new SmallRoom()) }
             };
         }
 
@@ -43,19 +49,42 @@ namespace Wolf
             return new HtmlRenderer();
         }
 
+        public Task Start(HttpContext context)
+        {
+            context.Response.StatusCode = 307;
+            context.Response.Headers.Add("location", "/entrance");
+            return Task.CompletedTask;
+        }
+
         public async Task Handle(HttpContext context, string resourceName)
         {
-            if (_places.TryGetValue(resourceName, out var place))
+            if (_resources.TryGetValue(resourceName, out var resource))
             {
-                var location = place.Visit(_game.Player);
-                //++_visits;
-                //var content = $"You've been here {_visits} time(s).";
-                context.Response.StatusCode = 200;
-                var accept = context.Request.Headers["Accept"];
-                var renderer = ChooseRenderer(accept[0]);
-                var s = renderer.Render(location);
-                context.Response.Headers.Add("content-type", renderer.ContentType);
-                await context.Response.WriteAsync(s);
+                try
+                {
+                    var location = resource.Request(context);
+                    context.Response.StatusCode = 200;
+                    var accept = context.Request.Headers["Accept"];
+                    var renderer = ChooseRenderer(accept[0]);
+                    var s = renderer.Render(location);
+                    context.Response.Headers.Add("content-type", renderer.ContentType);
+                    await context.Response.WriteAsync(s);
+                }
+                catch (ClientErrorException ex)
+                {
+                    context.Response.StatusCode = 400;
+                    context.Response.Headers.Add("content-type", "text/plain");
+                    await context.Response.WriteAsync(ex.Message);
+                }
+                catch (NotSupportedException)
+                {
+                    context.Response.StatusCode = 405;
+                }
+                catch (RedirectException ex)
+                {
+                    context.Response.StatusCode = 307;
+                    context.Response.Headers.Add("location", ex.Location);
+                }
             }
             else
             {
@@ -63,6 +92,6 @@ namespace Wolf
             }
         }
 
-        public IEnumerable<string> PlaceNames => _places.Keys;
+        public IEnumerable<string> ResourceNames => _resources.Keys;
     }
 }

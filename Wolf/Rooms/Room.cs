@@ -4,8 +4,11 @@ namespace Wolf
 {
     public abstract class Room : Place
     {
+        public abstract bool MayHoldRandomTreasure { get; }
+
         public override Representation Visit(Player player)
         {
+            player.Location = this; 
             if (player.HasLight)
             {
                 return VisitWhenLit(player);
@@ -28,9 +31,9 @@ namespace Wolf
                 Properties = new Dictionary<string, object>(),
                 Links = new List<Link>
                     {
-                        new Link("self", "hallway"),
-                        new Link("player", "player"),
-                        new Link("provisions", "provisions")
+                        new Link("self", Id),
+                        new Link("player", "/player"),
+                        new Link("shop", "/shop")
                     }
             };
 
