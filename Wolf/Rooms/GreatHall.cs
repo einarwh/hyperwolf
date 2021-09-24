@@ -2,31 +2,23 @@
 
 namespace Wolf
 {
-    public class GreatHall : Room
+    public class GreatHall : RegularRoom
     {
         public override string Id => "/great-hall";
         
         public override string Title => "The Great Hall";
 
-        public override bool MayHoldRandomTreasure => true;
-
-        public override Representation VisitWhenLit(Player player)
-        {
-            return new Representation
+        public override List<Link> NavigationLinks =>
+            new List<Link>
             {
-                Title = new Title(Title),
-                Description = new Description("You are in the great hall, an L-shaped room. There are doors to the east and to the north in the alcove is a door to the west."),
-                Properties = new Dictionary<string, object>(),
-                Links = new List<Link>
-                    {
-                        new Link("self", Id),
-                        new Link("player", "/player"),
-                        new Link("shop", "/shop"),
-                        new Link("north", "/audience-chamber"),
-                        new Link("east", "/inner-hallway"),
-                        new Link("west", "/audience-chamber"),
-                    }
+                new Link("north", "/audience-chamber"),
+                new Link("east", "/inner-hallway"),
+                new Link("west", "/audience-chamber"),
             };
+
+        public override string Description(Player player)
+        {
+            return "You are in the great hall, an L-shaped room. There are doors to the east and to the north in the alcove is a door to the west.";
         }
     }
 }

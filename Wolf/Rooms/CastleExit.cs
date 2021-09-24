@@ -2,29 +2,29 @@
 
 namespace Wolf
 {
-    public class CastleExit : Room
+    public class CastleExit : SpecialRoom
     {
         public override string Id => "/castle-exit";
 
-        public override string Title => "Castle Exit";
+        public override string Title => "Victory";
 
-        public override bool MayHoldRandomTreasure => false;
+        public override List<Link> GenericLinks => new List<Link>();
 
-        public override Representation VisitWhenLit(Player player)
-        {
-            return new Representation
+        public override List<Link> NavigationLinks =>
+            new List<Link>()
             {
-                Title = new Title(Title),
-                Description = new Description("..."),
-                Properties = new Dictionary<string, object>(),
-                Links = new List<Link>
-                    {
-                        new Link("self", Id),
-                        new Link("player", "/player"),
-                        new Link("shop", "/shop"),
-                        //new Link("east", "/rear-vestibule")
-                    }
+                new Link("play-again", "/start")
             };
+
+        public override string Description(Player player)
+        {
+            return $"You've done it!! That was the exit from the castle. You have succeeded, {player.Name}! You managed to get out of the castle alive! Well done! ";
+        }
+
+        public override string Status(Player player)
+        {
+            int score = 5 * player.Health.ToInt() + 2 * player.Wealth.ToInt();
+            return $"Your score is {score}.";
         }
     }
 }

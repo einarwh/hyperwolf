@@ -14,32 +14,37 @@ namespace Wolf
         {
             _game = game;
 
-            var random = new Random();
-
             _resources = new Dictionary<string, Resource>
             {
+                { "/start", new StartResource(_game) },
+                { "/death", new DeathResource(_game) },
                 { "/player", new PlayerResource(_game) },
                 { "/location", new LocationResource(_game) },
-                { "/shop", new ShopResource(_game, new Shop()) },
-                { "/hallway", new PlaceResource(_game, new Hallway()) },
-                { "/audience-chamber", new PlaceResource(_game, new AudienceChamber()) },
-                { "/great-hall", new PlaceResource(_game, new GreatHall()) },
-                { "/meeting-room", new PlaceResource(_game, new MeetingRoom()) },
-                { "/inner-hallway", new PlaceResource(_game, new InnerHallway()) },
-                { "/entrance", new PlaceResource(_game, new Entrance()) },
-                { "/kitchen", new PlaceResource(_game, new Kitchen()) },
-                { "/store-room", new PlaceResource(_game, new StoreRoom()) },
-                { "/lift", new PlaceResource(_game, new Lift()) },
-                { "/rear-vestibule", new PlaceResource(_game, new RearVestibule()) },
-                { "/castle-exit", new PlaceResource(_game, new CastleExit()) },
-                { "/dungeon", new PlaceResource(_game, new Dungeon()) },
-                { "/guard-room", new PlaceResource(_game, new GuardRoom()) },
-                { "/master-bedroom", new PlaceResource(_game, new MasterBedroom()) },
-                { "/upper-hallway", new PlaceResource(_game, new UpperHallway()) },
-                { "/treasury", new PlaceResource(_game, new Treasury(random)) },
-                { "/chambermaids-room", new PlaceResource(_game, new ChambermaidsRoom()) },
-                { "/dressing-chamber", new PlaceResource(_game, new DressingChamber()) },
-                { "/small-room", new PlaceResource(_game, new SmallRoom()) }
+                { "/teleport", new TeleportResource(_game) },
+                { "/shop", new ShopResource(_game) },
+                { "/hallway", new PlaceResource(_game, _game.Hallway) },
+                { "/audience-chamber", new PlaceResource(_game, _game.AudienceChamber) },
+                { "/great-hall", new PlaceResource(_game, _game.GreatHall) },
+                { "/meeting-room", new PlaceResource(_game, _game.MeetingRoom) },
+                { "/inner-hallway", new PlaceResource(_game, _game.InnerHallway) },
+                { "/entrance", new PlaceResource(_game, _game.Entrance) },
+                { "/kitchen", new PlaceResource(_game, _game.Kitchen) },
+                { "/store-room", new PlaceResource(_game, _game.StoreRoom) },
+                { "/lift", new PlaceResource(_game, _game.Lift) },
+                { "/rear-vestibule", new PlaceResource(_game, _game.RearVestibule) },
+                { "/castle-exit", new PlaceResource(_game, _game.CastleExit) },
+                { "/dungeon", new PlaceResource(_game, _game.Dungeon) },
+                { "/guard-room", new PlaceResource(_game, _game.GuardRoom) },
+                { "/master-bedroom", new PlaceResource(_game, _game.MasterBedroom) },
+                { "/upper-hallway", new PlaceResource(_game, _game.UpperHallway) },
+                { "/treasury", new PlaceResource(_game, _game.Treasury) },
+                { "/chambermaids-room", new PlaceResource(_game, _game.ChambermaidsRoom) },
+                { "/dressing-chamber", new PlaceResource(_game, _game.DressingChamber) },
+                { "/small-room", new PlaceResource(_game, _game.SmallRoom) },
+                { "/werewolf", new MonsterResource(_game, _game.Werewolf) },
+                { "/fleshgorger", new MonsterResource(_game, _game.Fleshgorger) },
+                { "/maldemer", new MonsterResource(_game, _game.Maldemer) },
+                { "/dragon", new MonsterResource(_game, _game.Dragon) },
             };
         }
 
@@ -52,7 +57,7 @@ namespace Wolf
         public Task Start(HttpContext context)
         {
             context.Response.StatusCode = 307;
-            context.Response.Headers.Add("location", "/entrance");
+            context.Response.Headers.Add("location", "/start");
             return Task.CompletedTask;
         }
 
@@ -82,7 +87,7 @@ namespace Wolf
                 }
                 catch (RedirectException ex)
                 {
-                    context.Response.StatusCode = 307;
+                    context.Response.StatusCode = ex.StatusCode;
                     context.Response.Headers.Add("location", ex.Location);
                 }
             }

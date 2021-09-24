@@ -11,30 +11,59 @@ namespace Wolf
 
     public class Player
     {
+        private readonly string _name;
         private readonly List<Thing> _inventory = new List<Thing>();
 
         private Money _wealth;
         private Health _health;
 
-        public Player()
+        private string _causeOfDeath;
+
+        public Player(string name)
         {
+            _name = name;
             _wealth = new Money(75);
             _health = new Health(100);
         }
 
-        public bool HasLight
-        {
-            get
-            {
-                return _inventory.Exists(it => it is Torch);
-            }
-        }
+        public string Name => _name;
+
+        public bool HasLight => _inventory.Exists(it => it is Torch);
+
+        public bool HasAmulet => _inventory.Exists(it => it is MagicAmulet);
+
+        public bool IsAlive => _health > new Health(0);
 
         public Money Wealth => _wealth;
 
         public Health Health => _health;
 
         public Place Location { get; set; }
+
+        public string CauseOfDeath
+        {
+            get
+            {
+                if (IsAlive)
+                {
+                    throw new Exception("You're not dead!");
+                }
+                else
+                {
+                    return _causeOfDeath;
+                }
+            }
+        }
+
+        public void FeelHungry()
+        {
+            _health = _health - new Health(5);
+            if (_health < new Health(1))
+            {
+                _health = new Health(0);
+                _causeOfDeath = "You died from starvation.";
+            }
+        }
 
         public void Keep(Thing thing)
         {
@@ -48,41 +77,70 @@ namespace Wolf
             }
         }
 
-        public void Drop(Thing thing)
-        {
-            _inventory.Remove(thing);
-        }
-
         private FoodSupply LookupFoodSupply()
         {
             var foodSupplyItem = _inventory.FirstOrDefault(it => it.Id == "food-supply");
             return foodSupplyItem as FoodSupply;
         }
 
+        public void Wound(Health wound, Monster monster)
+        {
+            _health = _health - wound;
+            if (_health < new Health(1))
+            {
+                _health = new Health(0);
+                _causeOfDeath = $"You were killed by the {monster.Title}.";
+            }
+        }
+
         public void Eat()
         {
             var foodSupply = LookupFoodSupply();
-            if (foodSupply.IsEmpty)
+            if (foodSupply is null || foodSupply.IsEmpty)
             {
                 throw new Exception("You have no food!");
             }
             else
             {
                 foodSupply.Decrement();
-                _health = _health + new Health(5);
+                _health += new Health(5);
+                if (foodSupply.IsEmpty)
+                {
+                    _inventory.Remove(foodSupply);
+                }
             }
         }
 
         public IEnumerable<Thing> Inventory => _inventory;
 
+        public IEnumerable<Weapon> Weapons 
+        {
+            get
+            {
+                var weapons = _inventory.Where(it => it is Weapon).Cast<Weapon>();
+                return weapons.Any() ? weapons : new List<Weapon> { new BareHands() };
+            }
+        }
+
+        public bool IsWeak => _health < new Health(25);
+
+        public bool HasArmor => _inventory.Exists(it => it is SuitOfArmor);
+
         public Representation Introspect()
         {
             var inventory = _inventory.Select(thing => thing.ToString()).ToArray();
 
+            var foodSupply = LookupFoodSupply();
+            var actions = new List<Action>();
+            if (foodSupply != null && !foodSupply.IsEmpty)
+            {
+                actions.Add(new Action("eat", "POST", "/player", "Eat a food ration"));
+            }
+
             return new Representation
             {
                 Title = new Title("The Player"),
-                Description = new Description("The bold hero of this adventure."),
+                Description = new Description($"You are {_name}, the bold hero of this adventure."),
                 Properties = new Dictionary<string, object>
                 {
                     ["location"] = Location.Title,
@@ -94,7 +152,8 @@ namespace Wolf
                     {
                         new Link("self", "/player"),
                         new Link("back", "/location")
-                    }
+                    },
+                Actions = actions
             };
         }
 
@@ -124,5 +183,4 @@ namespace Wolf
             }
         }
     }
-
 }

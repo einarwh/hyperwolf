@@ -2,27 +2,28 @@
 
 namespace Wolf
 {
-    public class ShopResource : Resource
+    public class StartResource : Resource
     {
         private readonly Game _game;
-        private readonly Shop _shop;
+        private readonly PlayerCreation _creation;
 
-        public ShopResource(Game game)
+        public StartResource(Game game)
         {
             _game = game;
-            _shop = _game.Shop;
+            _creation = new PlayerCreation();
         }
 
         protected override Representation Get(HttpContext context)
         {
-            return _shop.Visit(_game.Player);
+            return _creation.Prompt();
         }
 
         protected override Representation Post(HttpContext context)
         {
             var form = context.Request.Form;
-            var thingId = form["item"][0];
-            return _shop.Purchase(_game.Player, thingId);
+            var name = form["name"][0];
+            _game.Player = new Player(name);
+            throw new RedirectException(302, "/entrance");
         }
     }
 }

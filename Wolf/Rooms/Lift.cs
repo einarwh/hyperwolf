@@ -2,28 +2,23 @@
 
 namespace Wolf
 {
-    public class Lift : Room
+    public class Lift : SpecialRoom
     {
         public override string Id => "/lift";
 
         public override string Title => "Lift";
 
-        public override bool MayHoldRandomTreasure => false;
+        public override List<Link> GenericLinks => new List<Link>();
 
-        public override Representation VisitWhenLit(Player player)
-        {
-            return new Representation
+        public override List<Link> NavigationLinks =>
+            new List<Link>
             {
-                Title = new Title(Title),
-                Description = new Description("You have entered the lift... It slowly descends..."),
-                Properties = new Dictionary<string, object>(),
-                Links = new List<Link>
-                    {
-                        new Link("self", Id),
-                        new Link("player", "/player"),
-                        new Link("shop", "/shop")
-                    }
+                new Link("continue", "/rear-vestibule")
             };
+
+        public override string Description(Player player)
+        {
+            return "You have entered the lift... It slowly descends...";
         }
     }
 }

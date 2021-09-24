@@ -15,5 +15,11 @@ namespace Wolf
         {
             return _game.Player.Introspect();
         }
+
+        protected override Representation Post(HttpContext context)
+        {
+            _game.Player.Eat();
+            return Get(context);
+        }
     }
 }

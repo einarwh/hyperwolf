@@ -35,7 +35,7 @@ namespace Wolf
             var linksList = CreateLinksList(location.Links);
             var actionForm = CreateActionForm(location.Actions);
             
-            return $"<html><title>{location.Title}</title><body><h1>{location.Title}</h1><p>{location.Description}</p><div>{s}</div>{linksList}{actionForm}</body></html>";
+            return $"<html><title>{location.Title}</title><body><h1>{location.Title}</h1><p>{location.Description}</p><p>{location.Status}</p><div>{s}</div>{linksList}{actionForm}</body></html>";
         }
 
         private static Link RenameSelfLink(Link link)
@@ -51,7 +51,7 @@ namespace Wolf
                     .Select(it => it.Relation == "self" ? RenameSelfLink(it) : it)
                     .Select(it => $"<li>{LinkToAnchorTag(it)}</li>");
                 var s = string.Join("", linkItems);
-                return  $"Navigation: <ul>{s}</ul>";
+                return  $"<h3>Navigation</h3> <ul>{s}</ul>";
             }
             else
             {
@@ -70,7 +70,7 @@ namespace Wolf
             {
                 var forms = actions.Select(ActionToForm);
                 var s = string.Join("\n", forms);
-                return $"Actions: {s}";
+                return $"<h3>Actions</h3>{s}";
             }
             else
             {

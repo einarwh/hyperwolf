@@ -12,6 +12,18 @@ namespace Wolf
 
         public override string Title => "The Shop";
 
+        public override List<Link> GenericLinks => 
+            new List<Link>
+            {
+                new Link("self", Id),
+                new Link("back", "/location")
+            };
+
+        public override string Description(Player player)
+        {
+            return "Stock up on things that may help you.";
+        }
+
         public Shop()
         {
             _stock = new List<ThingForPurchase>
@@ -25,7 +37,7 @@ namespace Wolf
             };
         }
 
-        public override Representation Visit(Player player)
+        public override Representation VisitAlive(Player player)
         {
             var fields = _stock.Select(item => ToItemField(item)).ToList();
             var action = new Action("purchase-item", "POST", "/shop", "Make purchase");
@@ -45,13 +57,9 @@ namespace Wolf
             return new Representation
             {
                 Title = new Title(Title),
-                Description = new Description("Stock up on things to help you."),
+                Description = new Description(Description(player)),
                 Properties = properties,
-                Links = new List<Link>
-                    {
-                        new Link("self", Id),
-                        new Link("back", "/location")
-                    },
+                Links = Links(player),
                 Actions = new List<Action>
                 {
                     action
