@@ -35,7 +35,7 @@ namespace Wolf
             if (Monsters.Any(it => it.IsAlive))
             {
                 var monster = Monsters.First(it => it.IsAlive);
-                props.Add("encounter", $"There is a {monster.Title} here!");
+                props.Add("Encounter", $"There is a {monster.Title} here!");
             }
 
             return new Representation

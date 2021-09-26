@@ -143,10 +143,10 @@ namespace Wolf
                 Description = new Description($"You are {_name}, the bold hero of this adventure."),
                 Properties = new Dictionary<string, object>
                 {
-                    ["location"] = Location.Title,
-                    ["health"] = _health,
-                    ["wealth"] = _wealth,
-                    ["inventory"] = inventory
+                    ["Location"] = Location.Title,
+                    ["Health"] = _health,
+                    ["Wealth"] = _wealth,
+                    ["Inventory"] = inventory
                 },
                 Links = new List<Link>
                     {
