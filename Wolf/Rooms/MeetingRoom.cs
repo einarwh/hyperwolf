@@ -2,7 +2,7 @@
 
 namespace Wolf
 {
-    public class MeetingRoom : SpecialRoom
+    public class MeetingRoom : Room
     {
         public override string Id => "/meeting-room";
 

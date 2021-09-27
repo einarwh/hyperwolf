@@ -26,7 +26,7 @@ namespace Wolf
                 new Link("shop", "/shop")
             };
 
-        public List<Link> Links(Player player) 
+        public virtual List<Link> Links(Player player) 
         {
             if (Monsters.Any())
             {

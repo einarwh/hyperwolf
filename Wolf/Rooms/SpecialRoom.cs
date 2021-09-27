@@ -1,6 +1,6 @@
 ﻿namespace Wolf
 {
-    public abstract class SpecialRoom : Room
-    {
-    }
+    //public abstract class SpecialRoom : Room
+    //{
+    //}
 }

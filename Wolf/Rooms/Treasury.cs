@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Wolf
 {
-    public class Treasury : SpecialRoom
+    public class Treasury : Room
     {
         public override string Id => "/treasury";
 

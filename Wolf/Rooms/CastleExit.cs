@@ -2,19 +2,22 @@
 
 namespace Wolf
 {
-    public class CastleExit : SpecialRoom
+    public class CastleExit : Room
     {
         public override string Id => "/castle-exit";
 
         public override string Title => "Victory";
-
-        public override List<Link> GenericLinks => new List<Link>();
 
         public override List<Link> NavigationLinks =>
             new List<Link>()
             {
                 new Link("play-again", "/start")
             };
+
+        public override List<Link> Links(Player player)
+        {
+            return NavigationLinks;
+        }
 
         public override string Description(Player player)
         {
