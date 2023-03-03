@@ -102,6 +102,11 @@ namespace Wolf
 
         public Representation Visit(Player player)
         {
+            if (player == null) 
+            {
+                throw new RedirectException(302, "/start");
+            }
+
             if (player.IsAlive)
             {
                 return VisitAlive(player);
