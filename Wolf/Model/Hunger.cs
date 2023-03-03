@@ -10,7 +10,7 @@ namespace Wolf
         private readonly Game _game;
         private readonly TimeSpan _refreshInterval = TimeSpan.FromSeconds(30);
 
-        private Timer? _timer;
+        private Timer _timer;
 
         public Hunger(Game game)
         {
