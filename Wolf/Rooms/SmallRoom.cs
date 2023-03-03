@@ -12,7 +12,7 @@ namespace Wolf
             new List<Link>
             {
                 new Link("north", "/lift"),
-                new Link("east", "/treasury")
+                new Link("west", "/treasury")
             };
 
         public override string Description(Player player)

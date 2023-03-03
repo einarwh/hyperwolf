@@ -50,7 +50,6 @@ namespace Wolf
 
         private static IRenderer ChooseRenderer(string value)
         {
-            //var ss = value.Split(",");
             return new HtmlRenderer();
         }
 

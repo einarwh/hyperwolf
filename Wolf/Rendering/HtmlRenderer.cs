@@ -96,12 +96,19 @@ namespace Wolf
 
             var s = string.Join(" ", properties);
 
-            var label = field.Title ?? field.Name;
+            if (field.Type == "hidden") 
+            {
+                return $"<input {s} />";
+            }
+            else 
+            {
+                var label = field.Title ?? field.Name;
 
-            return $"<input {s} /><label for=\"{field.Name}\">{label}</label>";
+                return $"<input {s} /><label for=\"{field.Name}\">{label}</label>";
+            }
         }
 
-        private static string ActionToForm(Action action)
+        private static string ActionToForm(Action action) 
         {
             var inputs = action.Fields.Select(f => FieldToInput(f));
             var inputsStr = string.Join("<br/>", inputs);

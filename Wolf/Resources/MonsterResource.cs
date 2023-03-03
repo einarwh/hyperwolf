@@ -27,7 +27,7 @@ namespace Wolf
                 var weaponId = form["weapon"][0];
                 return _monster.Attack(_game.Player, weaponId);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw new ClientErrorException("You must choose a weapon!");
             }

@@ -27,6 +27,27 @@ namespace Wolf
             return FightMonster(player, new List<string>());
         }
 
+        private Action CreateAttackAction(Player player) 
+        {
+            if (player.Weapons.Count() == 1) 
+            {
+                var weapon = player.Weapons.Single();
+                var action = new Action("attack", "POST", Id, $"Attack the monster with your {weapon.Name.ToLower()}");
+                var weaponField = new Field("weapon") { Type = "hidden", Value = weapon.Id, Title = weapon.Name };
+                action.AddField(weaponField);
+                return action;
+            }
+            else 
+            {
+                var action = new Action("attack", "POST", Id, "Attack the monster");
+                foreach (var weapon in player.Weapons)
+                {
+                    action.AddField(new Field("weapon") { Type = "radio", Value = weapon.Id, Title = weapon.Name });
+                }
+                return action;
+            }
+        }
+
         private Representation FightMonster(Player player, List<string> battleReport)
         {
             var links = new List<Link>(); 
@@ -39,14 +60,7 @@ namespace Wolf
             var actions = new List<Action>();
             if (IsActive)
             {
-                var action = new Action("attack", "POST", Id, "Attack the monster");
-
-                foreach (var weapon in player.Weapons)
-                {
-                    action.AddField(new Field("weapon") { Type = "radio", Value = weapon.Id, Title = weapon.Name });
-                }
-
-                actions.Add(action);
+                actions.Add(CreateAttackAction(player));
             }
 
             var props = new Dictionary<string, object>
