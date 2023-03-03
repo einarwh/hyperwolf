@@ -59,17 +59,32 @@ namespace Wolf
                 var actions = new List<Action>();
                 if (Things.Any())
                 {
-                    var fields = Things.Select(item => ToPickUpItemField(item)).ToList();
-                    var action = new Action("get-item", "POST", Id, "Pick up");
-                    foreach (var f in fields)
-                    {
-                        action.AddField(f);
-                    }
-
-                    actions.Add(action);
+                    actions.Add(CreatePickUpAction());
                 }
 
                 return actions;
+            }
+        }
+
+        private Action CreatePickUpAction() 
+        {
+            if (Things.Count() == 1) 
+            {
+                var field = ToHiddenPickUpItemField(Things.Single());
+                var action = new Action("get-item", "POST", Id, $"Pick up {field.Title.ToLower()}");
+                action.AddField(field);
+                return action;
+            }
+            else 
+            {
+                var fields = Things.Select(item => ToPickUpItemField(item)).ToList();
+                var action = new Action("get-item", "POST", Id, "Pick up");
+                foreach (var f in fields)
+                {
+                    action.AddField(f);
+                }
+
+                return action;
             }
         }
 
@@ -78,6 +93,18 @@ namespace Wolf
             var field = new Field("item")
             {
                 Type = "radio",
+                Value = thing.Id,
+                Title = thing.ToString()
+            };
+
+            return field;
+        }
+
+        private static Field ToHiddenPickUpItemField(Thing thing)
+        {
+            var field = new Field("item")
+            {
+                Type = "hidden",
                 Value = thing.Id,
                 Title = thing.ToString()
             };

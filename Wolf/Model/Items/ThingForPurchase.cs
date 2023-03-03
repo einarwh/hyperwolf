@@ -20,5 +20,4 @@
             return $"{_thing} ({_price})";
         }
     }
-
 }
