@@ -6,4 +6,4 @@ You need .NET installed.
 
 Type `dotnet run --project Wolf/Wolf.csproj` in a terminal.
 
-Open `http://localhost:5000` in a browser.
+Open `http://localhost:5050` in a browser.
