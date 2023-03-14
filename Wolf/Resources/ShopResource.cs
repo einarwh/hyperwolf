@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 
 namespace Wolf
 {
@@ -21,8 +22,16 @@ namespace Wolf
         protected override Representation Post(HttpContext context)
         {
             var form = context.Request.Form;
-            var thingId = form["item"][0];
-            return _shop.Purchase(_game.Player, thingId);
+            var weaponValues = form["item"];
+            if (weaponValues == StringValues.Empty) 
+            {
+                throw new ClientErrorException("You must choose an item!");
+            }
+            else 
+            {
+                var thingId = form["item"][0];
+                return _shop.Purchase(_game.Player, thingId);
+            }
         }
     }
 }

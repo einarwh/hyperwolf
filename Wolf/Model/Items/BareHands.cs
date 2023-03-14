@@ -4,7 +4,7 @@
     {
         public override string Id => "hands";
 
-        public override string Name => "Your bare hands";
+        public override string Name => "Bare hands";
 
         public override double Factor => 1.2;
 

@@ -39,7 +39,11 @@ namespace Wolf
 
         public override Representation VisitAlive(Player player)
         {
-            var fields = _stock.Select(item => ToItemField(item)).ToList();
+            var fields = 
+                _stock
+                .Where(item => item.Price <= player.Wealth)
+                .Select(item => ToItemField(item))
+                .ToList();
             var action = new Action("purchase-item", "POST", "/shop", "Make purchase");
             foreach (var f in fields)
             {
