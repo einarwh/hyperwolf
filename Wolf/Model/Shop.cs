@@ -37,18 +37,32 @@ namespace Wolf
             };
         }
 
-        public override Representation VisitAlive(Player player)
+        private List<Action> CreateActions(Player player) 
         {
             var fields = 
                 _stock
                 .Where(item => item.Price <= player.Wealth)
                 .Select(item => ToItemField(item))
                 .ToList();
-            var action = new Action("purchase-item", "POST", "/shop", "Make purchase");
-            foreach (var f in fields)
+
+            if (fields.Any()) 
             {
-                action.AddField(f);
+                var action = new Action("purchase-item", "POST", "/shop", "Make purchase");
+                foreach (var f in fields)
+                {
+                    action.AddField(f);
+                }
+
+                return new List<Action> { action };
             }
+            else {
+                return null;
+            }
+        }
+
+        public override Representation VisitAlive(Player player)
+        {
+            var actions = CreateActions(player);
 
             var playerItems = player.Inventory.Select(it => it.ToString()).ToArray();
             var properties = new Dictionary<string, object>();
@@ -64,10 +78,7 @@ namespace Wolf
                 Description = new Description(Description(player)),
                 Properties = properties,
                 Links = Links(player),
-                Actions = new List<Action>
-                {
-                    action
-                }
+                Actions = actions
             };
         }
 

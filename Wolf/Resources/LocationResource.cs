@@ -13,6 +13,11 @@ namespace Wolf
 
         protected override Representation Get(HttpContext context)
         {
+            if (_game.Player == null) 
+            {
+                throw new RedirectException(302, "/start");
+            }
+
             var location = _game.Player.Location;
             var id = location.Id;
             throw new RedirectException(302, id);

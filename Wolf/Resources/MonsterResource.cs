@@ -17,6 +17,11 @@ namespace Wolf
 
         protected override Representation Get(HttpContext context)
         {
+            if (_game.Player == null) 
+            {
+                throw new RedirectException(302, "/start");
+            }
+
             return _monster.Encounter(_game.Player);
         }
 

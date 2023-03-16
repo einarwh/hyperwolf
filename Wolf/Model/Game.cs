@@ -12,7 +12,6 @@ namespace Wolf
 
         public Random Random => _random;
 
-
         private static void ScatterTreasures(IEnumerable<Treasure> treasures, IList<RegularRoom> rooms, Random random)
         {
             if (treasures.Any() && rooms.Any())
@@ -31,11 +30,11 @@ namespace Wolf
         {
             if (monsters.Any() && rooms.Any())
             {
-                var t = monsters.First();
+                var first = monsters.First();
                 var rest = monsters.Skip(1);
                 var index = random.Next(0, rooms.Count);
                 var chosenRoom = rooms[index];
-                chosenRoom.PlaceMonster(t);
+                chosenRoom.PlaceMonster(first);
                 rooms.Remove(chosenRoom);
                 ScatterMonsters(rest, rooms, random);
             }
