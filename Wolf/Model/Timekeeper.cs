@@ -5,32 +5,32 @@ using System.Threading.Tasks;
 
 namespace Wolf
 {
-    public class Hunger : IHostedService
+    public class Timekeeper : IHostedService
     {
-        private readonly Game _game;
+        private readonly MainRequestHandler _main;
         private readonly TimeSpan _refreshInterval = TimeSpan.FromSeconds(30);
 
         private Timer _timer;
 
-        public Hunger(Game game)
+        public Timekeeper(MainRequestHandler main)
         {
-            _game = game;
+            _main = main;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _timer = new Timer(_ => AffectPlayer(),
+            _timer = new Timer(_ => Tick(),
                 null,
                 TimeSpan.Zero,
                 _refreshInterval);
             return Task.CompletedTask;
         }
 
-        private void AffectPlayer()
+        private void Tick()
         {
-            if (_game.Player != null)
+            if (_main != null) 
             {
-                _game.Player.FeelHungry();
+                _main.Tick();
             }
         }
 

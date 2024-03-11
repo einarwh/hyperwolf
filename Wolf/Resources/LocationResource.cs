@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using Microsoft.AspNetCore.Http;
 
 namespace Wolf
 {
@@ -15,12 +16,14 @@ namespace Wolf
         {
             if (_game.Player == null) 
             {
-                throw new RedirectException(302, "/start");
+                var redirectTo = $"/start";
+                throw new RedirectException(302, redirectTo);
             }
-
-            var location = _game.Player.Location;
-            var id = location.Id;
-            throw new RedirectException(302, id);
+            else {
+                var location = _game.Player.Location;
+                var redirectTo = $"/{_game.GameId}{location.Id}";
+                throw new RedirectException(302, redirectTo);
+            }
         }
     }
 
@@ -39,7 +42,7 @@ namespace Wolf
             var rooms = _game.RegularRooms;
             var index = random.Next(0, rooms.Count);
             var destination = rooms[index];
-            throw new RedirectException(302, destination.Id);
+            throw new RedirectException(302, $"/{_game.GameId}{destination.Id}");
         }
     }
 }

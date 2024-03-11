@@ -15,16 +15,19 @@ namespace Wolf
 
         protected override Representation Get(HttpContext context)
         {
-            return _place.Visit(_game.Player);
+            return _place.Visit(_game);
         }
 
         protected override Representation Post(HttpContext context)
         {
             var form = context.Request.Form;
-            if (form.Count > 0) {
+            if (form.Count > 0) 
+            {
                 var thingId = form["item"][0];
-                return _place.PickUp(_game.Player, thingId);
-            } else {
+                return _place.PickUp(_game, thingId);
+            } 
+            else 
+            {
                 throw new ClientErrorException("You didn't select an item!");
             }
         }

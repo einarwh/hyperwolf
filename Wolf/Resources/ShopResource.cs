@@ -16,7 +16,7 @@ namespace Wolf
 
         protected override Representation Get(HttpContext context)
         {
-            return _shop.Visit(_game.Player);
+            return _shop.Visit(_game);
         }
 
         protected override Representation Post(HttpContext context)
@@ -30,7 +30,7 @@ namespace Wolf
             else 
             {
                 var thingId = form["item"][0];
-                return _shop.Purchase(_game.Player, thingId);
+                return _shop.Purchase(_game, thingId);
             }
         }
     }

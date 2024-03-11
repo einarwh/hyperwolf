@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -7,13 +8,13 @@ namespace Wolf
 {
     public class Startup
     {
-        private readonly Game _game = new Game();
+        private readonly MainRequestHandler _main = new MainRequestHandler();
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddHostedService<Hunger>(sp => new Hunger(_game));
+            services.AddHostedService<Timekeeper>(sp => new Timekeeper(_main));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -26,16 +27,13 @@ namespace Wolf
 
             app.UseRouting();
 
-            var handler = new GameRequestHandler(_game);
-
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/", async context => await handler.Start(context));
+                endpoints.Map("/start", async context => await _main.Start(context));
 
-                foreach (var name in handler.ResourceNames)
-                {
-                    endpoints.Map(name, async context => await handler.Handle(context, name));
-                }
+                endpoints.Map("/{gameId}/{resourceName}", async (HttpContext context, string gameId, string resourceName) => await _main.Handle(context, gameId, resourceName));
+
+                endpoints.MapFallback(async context => await _main.ToStart(context));
             });
         }
     }

@@ -21,7 +21,7 @@ namespace Wolf
 
         public override string Description(Player player)
         {
-            return "Stock up on things that may help you.";
+            return "Stock up on things that may help you. Yes, the shop magically follows you around. It's weird.";
         }
 
         public Shop()
@@ -93,11 +93,12 @@ namespace Wolf
             return stockItem;
         }
 
-        public Representation Purchase(Player player, string thingId)
+        public Representation Purchase(Game game, string thingId)
         {
+            var player = game.Player;
             var stockItem = Lookup(thingId);
             player.Buy(stockItem);
-            return Visit(player);
+            return Visit(game);
         }
 
         private static Field ToItemField(ThingForPurchase item)

@@ -127,8 +127,9 @@ namespace Wolf
             return string.Join(" ", lines);
         }
 
-        public Representation Visit(Player player)
+        public Representation Visit(Game game)
         {
+            var player = game.Player;
             if (player == null) 
             {
                 throw new RedirectException(302, "/start");
@@ -140,13 +141,8 @@ namespace Wolf
             }
             else
             {
-                return VisitDead(player);
+                throw new RedirectException(302, $"/{game.GameId}/death");
             }
-        }
-
-        private Representation VisitDead(Player player)
-        {
-            throw new RedirectException(302, "/death");
         }
 
         public abstract Representation VisitAlive(Player player);
@@ -165,10 +161,11 @@ namespace Wolf
             _monsters.Add(monster);
         }
 
-        public Representation PickUp(Player player, string thingId)
+        public Representation PickUp(Game game, string thingId)
         {
+            var player = game.Player;
             player.Keep(Take(thingId));
-            return Visit(player);
+            return Visit(game);
         }
 
         private Thing Take(string thingId)

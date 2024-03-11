@@ -11,7 +11,7 @@ namespace Wolf
         public override List<Link> NavigationLinks =>
             new List<Link>()
             {
-                new Link("play-again", "/start")
+                new Link("play-again", "/play-again")
             };
 
         public override List<Link> Links(Player player)

@@ -1,17 +1,21 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Web;
 
 namespace Wolf
 {
     public class StartResource : Resource
     {
-        private readonly Game _game;
         private readonly PlayerCreation _creation;
+        private readonly MainRequestHandler _gameRegistry;
 
-        public StartResource(Game game)
+        private readonly Random _random;
+
+        public StartResource(MainRequestHandler gameRegistry)
         {
-            _game = game;
             _creation = new PlayerCreation();
+            _gameRegistry = gameRegistry;
+            _random = new Random();
         }
 
         protected override Representation Get(HttpContext context)
@@ -23,8 +27,10 @@ namespace Wolf
         {
             var form = context.Request.Form;
             var name = HttpUtility.HtmlEncode(form["name"][0]);
-            _game.Player = new Player(name);
-            throw new RedirectException(302, "/entrance");
+            var player = new Player(name);
+            var game = new Game(player, _random);
+            _gameRegistry.AddGame(game);
+            throw new RedirectException(302, $"/{game.GameId}/entrance");
         }
     }
 }

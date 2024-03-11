@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
 namespace Wolf
 {
     public class Game
     {
-        public Player Player { get; set; }
+        public Player Player => _player;
 
         private List<RegularRoom> _regularRooms;
 
@@ -40,10 +41,8 @@ namespace Wolf
             }
         }
 
-        public Game()
+        public Game(Player player, Random random)
         {
-            var random = new Random();
-
             Shop = new Shop();
             Hallway = new Hallway();
             AudienceChamber = new AudienceChamber();
@@ -92,6 +91,9 @@ namespace Wolf
             ScatterMonsters(monsters, RegularRooms, random);
 
             _random = random;
+            _player = player;
+
+            _gameId = Guid.NewGuid().ToString().Substring(0, 8);
         }
 
         private static Treasure CreateSmallTreasure(Random random)
@@ -106,9 +108,20 @@ namespace Wolf
             return new Treasure(new Money(amount));
         }
 
+        public void AdvanceTime() 
+        {
+            Player.FeelHungry();
+        }
+
         public List<RegularRoom> RegularRooms => _regularRooms.ToList();
 
         private readonly Random _random;
+
+        private readonly Player _player;
+
+        private readonly string _gameId;
+
+        public string GameId => _gameId;
 
         public Shop Shop { get; }
         public Hallway Hallway { get; }
