@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System.Web;
 
 namespace Wolf
 {
@@ -21,7 +22,7 @@ namespace Wolf
         protected override Representation Post(HttpContext context)
         {
             var form = context.Request.Form;
-            var name = form["name"][0];
+            var name = HttpUtility.HtmlEncode(form["name"][0]);
             _game.Player = new Player(name);
             throw new RedirectException(302, "/entrance");
         }
