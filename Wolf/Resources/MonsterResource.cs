@@ -19,7 +19,12 @@ namespace Wolf
         {
             if (_game.Player == null) 
             {
-                throw new RedirectException(302, $"/{_game.GameId}/start");
+                throw new RedirectException(302, "/start");
+            }
+
+            if (!_game.Player.IsAlive) 
+            {
+                throw new RedirectException(302, $"/{_game.GameId}/death");
             }
 
             return _monster.Encounter(_game.Player);

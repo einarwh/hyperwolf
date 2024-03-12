@@ -27,12 +27,13 @@ namespace Wolf
 
             app.UseRouting();
 
+            var insights = new InsightsRequestHandler(_main);
+
             app.UseEndpoints(endpoints =>
             {
+                endpoints.Map("/insights", async context => await insights.Handle(context));
                 endpoints.Map("/start", async context => await _main.Start(context));
-
                 endpoints.Map("/{gameId}/{resourceName}", async (HttpContext context, string gameId, string resourceName) => await _main.Handle(context, gameId, resourceName));
-
                 endpoints.MapFallback(async context => await _main.ToStart(context));
             });
         }

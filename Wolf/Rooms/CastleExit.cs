@@ -6,7 +6,7 @@ namespace Wolf
     {
         public override string Id => "/castle-exit";
 
-        public override string Title => "Victory";
+        public override string Title => "Castle Exit";
 
         public override List<Link> NavigationLinks =>
             new List<Link>()
@@ -21,6 +21,7 @@ namespace Wolf
 
         public override string Description(Player player)
         {
+            player.Win();
             return $"You've done it!! That was the exit from the castle. You have succeeded, {player.Name}! You managed to get out of the castle alive! Well done! ";
         }
 

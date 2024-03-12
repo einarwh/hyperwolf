@@ -12,6 +12,8 @@ namespace Wolf
 
         private const int MaxNumberOfConcurrentGames = 25;
 
+        public IReadOnlyDictionary<string, GameRequestHandler> Games => _games;
+
         public void AddGame(Game game) 
         {
             if (_games.Values.Count() < MaxNumberOfConcurrentGames) 

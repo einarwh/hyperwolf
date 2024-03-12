@@ -10,6 +10,8 @@ namespace Wolf
         private readonly Game _game;
         private readonly Dictionary<string, Resource> _resources;
 
+        private DateTime _createdTime = DateTime.UtcNow;
+
         private DateTime _lastRequestTime = DateTime.UtcNow;
 
         public GameRequestHandler(Game game)
@@ -63,6 +65,7 @@ namespace Wolf
 
         public Resource LookupResource(string resourceName) 
         {
+            _lastRequestTime = DateTime.UtcNow;
             if (_resources.TryGetValue(resourceName, out var resource))
             {
                 return resource;
@@ -75,6 +78,8 @@ namespace Wolf
         public IEnumerable<string> ResourceNames => _resources.Keys;
 
         public Game Game => _game;
+
+        public DateTime CreatedTime => _createdTime; 
 
         public DateTime LastRequestTime => _lastRequestTime;
     }
