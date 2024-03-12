@@ -39,7 +39,14 @@ namespace Wolf
             var listItems = games.Select(it => GetGameListItem(it)).ToList();
             var listContent = string.Join("\n", listItems);
             var list = listItems.Any() ? $"<ul>{listContent}</ul>" : "";
-            return $"<html><title>{title}</title><body><h1>{title}</h1>{summary}{list}</body></html>";
+            var metaTags = new [] {
+                "<meta charset=\"UTF-8\">",
+                "<meta name=\"description\" content=\"Hypermedia adventure game\">",
+                "<meta name=\"author\" content=\"Einar W. Høst\">",
+                "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
+            };
+            var metaString = string.Join("\n", metaTags);
+            return $"<!DOCTYPE html><html><head>{metaString}<title>{title}</title><body><h1>{title}</h1>{summary}{list}</body></html>";
         }
 
         public async Task Handle(HttpContext context) 
