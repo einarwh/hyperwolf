@@ -57,11 +57,13 @@ namespace Wolf
 
         public void FeelHungry()
         {
-            _health = _health - new Health(5);
-            if (_health < new Health(1))
-            {
-                _health = new Health(0);
-                _causeOfDeath = "You died from starvation.";
+            if (IsAlive) {
+                _health = _health - new Health(5);
+                if (_health < new Health(1))
+                {
+                    _health = new Health(0);
+                    _causeOfDeath = "You died from starvation.";
+                }
             }
         }
 
