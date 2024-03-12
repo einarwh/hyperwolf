@@ -17,6 +17,8 @@ namespace Wolf
         private Money _wealth;
         private Health _health;
 
+        private bool _won;
+
         private string _causeOfDeath;
 
         public Player(string name)
@@ -24,6 +26,7 @@ namespace Wolf
             _name = name;
             _wealth = new Money(75);
             _health = new Health(100);
+            _won = false;
         }
 
         public string Name => _name;
@@ -33,6 +36,8 @@ namespace Wolf
         public bool HasAmulet => _inventory.Exists(it => it is MagicAmulet);
 
         public bool IsAlive => _health > new Health(0);
+
+        public bool HasWon => _won;
 
         public Money Wealth => _wealth;
 
@@ -57,7 +62,7 @@ namespace Wolf
 
         public void FeelHungry()
         {
-            if (IsAlive) {
+            if (IsAlive && !HasWon) {
                 _health = _health - new Health(5);
                 if (_health < new Health(1))
                 {
@@ -65,6 +70,11 @@ namespace Wolf
                     _causeOfDeath = "You died from starvation.";
                 }
             }
+        }
+
+        public void Win()
+        {
+            _won = true;
         }
 
         public void Keep(Thing thing)
