@@ -32,6 +32,11 @@ namespace Wolf
 
         protected override Representation Post(HttpContext context)
         {
+            if (!_game.Player.IsAlive) 
+            {
+                throw new RedirectException(302, $"/{_game.GameId}/death");
+            }
+
             var form = context.Request.Form;
             var weaponValues = form["weapon"];
             if (weaponValues == StringValues.Empty) 
