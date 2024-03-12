@@ -97,11 +97,13 @@ namespace Wolf
 
         public void Wound(Health wound, Monster monster)
         {
-            _health = _health - wound;
-            if (_health < new Health(1))
-            {
-                _health = new Health(0);
-                _causeOfDeath = $"You were killed by the {monster.Title}.";
+            if (IsAlive && !HasWon) {
+                _health = _health - wound;
+                if (_health < new Health(1))
+                {
+                    _health = new Health(0);
+                    _causeOfDeath = $"You were killed by the {monster.Title}.";
+                }
             }
         }
 
